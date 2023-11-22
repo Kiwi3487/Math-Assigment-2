@@ -8,16 +8,27 @@ public class LicoreecAimShoot : MonoBehaviour
     private int contactCount = 0;
     private int shotsFired = 0;
     private bool hasTouched = false;
+    private Rigidbody2D rb;
+    private MouseClickPlayer mouseClickPlayer;
+    public GameObject LicoreecPrefab;
 
+    
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        GameObject playerObject = GameObject.Find("Player");
+        mouseClickPlayer = playerObject.GetComponent<MouseClickPlayer>();
+    }
+    
     private void Update()
     {
-        if (hasTouched && Input.GetMouseButtonDown(0) && shotsFired < contactCount + 1) // Change 0 to the appropriate button index
+        if (hasTouched && Input.GetKeyDown(KeyCode.E) && shotsFired < contactCount + 1)
         {
             Shoot();
         }
     }
 
-    private void Shoot()
+    public void Shoot()
     {
         GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -40,6 +51,23 @@ public class LicoreecAimShoot : MonoBehaviour
                 shotsFired = 0;
                 contactCount++;
             }
+            if (mouseClickPlayer != null)
+            {
+                mouseClickPlayer.SpawnPrefab(LicoreecPrefab);
+            }
+        }
+    }
+
+    public void ToggleShoot()
+    {
+        if (!hasTouched)
+        {
+            hasTouched = true;
+        }
+        else
+        {
+            shotsFired = 0;
+            contactCount++;
         }
     }
 }
